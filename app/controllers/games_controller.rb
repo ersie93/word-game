@@ -11,8 +11,8 @@ class GamesController < ApplicationController
   	@attempt = params[:word]
     @valid = valid_word(@attempt)
     @includes = included(@attempt, params[:token])
-    raise
     @isValid = (@includes == true) && (@valid == true) ? true : false
+    @score = @isValid ? @attempt.length * 2 : "Not in the grid!"
   end
 
   def valid_word(attempt)
@@ -23,8 +23,9 @@ class GamesController < ApplicationController
   end
 
   def included(attempt, grid)
-    attempt.upcase.chars.all? do |element|
-      attempt.count(element) <= grid.count(element)
+    notInGrid = attempt.upcase.chars.reject do |element|
+      attempt.upcase.count(element) <= grid.count(element)
     end
+    notInGrid.count > 0 ? false : true
   end
 end
